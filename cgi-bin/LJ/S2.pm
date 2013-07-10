@@ -2950,19 +2950,33 @@ sub viewer_can_search {
     return $ju->allow_search_by( $remote );
 }
 
-# Returns a search form for this journal
-sub print_search_form {
-    return "" unless defined($LJ::S2::CURR_PAGE);
+sub viewer_can_search_comments {
+    my $remote = LJ::get_remote();
+    return 0 unless $remote;
+    return 0 unless defined $LJ::S2::CURR_PAGE;
 
     my $ju = $LJ::S2::CURR_PAGE->{_u};
 
+    return $ju->allow_comment_search ( $remote );
+}
+
+# Returns a search form for this journal
+sub print_search_form {
+    my $remote = LJ::get_remote();
+    return 0 unless $remote;
+    return "" unless defined($LJ::S2::CURR_PAGE);
+
+    my $ju = $LJ::S2::CURR_PAGE->{_u};
     my $search_form = '<div class="search-form">';
     $search_form .= '<form method="post" action="'. $LJ::SITEROOT. '/search?user=' . $ju->user . '">';
     $search_form .= LJ::form_auth();
     $search_form .= '<input class="search-box" type="text" name="query" maxlength="255">';
+    if ( $ju->allow_comment_search ( $remote )) {
+        $search_form .= '<br/><input class="comment_search_checkbox" type="checkbox">';
+        $search_form .= '<label for="with_comments">Include comments in search results</label>';
+    }
     $search_form .= '<input class="search-button" type="submit" value="' . $_[1] . '" />';
     $search_form .= '</form></div>';
-
     S2::pout( $search_form );
 }
 
