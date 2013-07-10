@@ -4131,6 +4131,7 @@ function print_module_search() {
     # only print this module if the viewer can search this journal
     if (viewer_can_search()) {
         var Page p = get_page();
+
         open_module("search", $*text_module_search, "$*SITEROOT/search?user=" + $p.journal.username);
         print_search_form($*text_module_search_btn);
         close_module();
